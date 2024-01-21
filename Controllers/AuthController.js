@@ -7,6 +7,7 @@ const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
+//controller to login
 const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -24,13 +25,21 @@ const Login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = generateAccessToken({ id: user._id, email: user.email });
-    res.status(200).json({ message: "Login successful", token });
+    const responseUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    const token = generateAccessToken(responseUser);
+    res.status(200).json({ message: "Login successful", token:token,user:responseUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+//controller to signUp
 const SignUp = async (req, res) => {
   try {
     const { name, email, role, password } = req.body;
@@ -39,9 +48,9 @@ const SignUp = async (req, res) => {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
 
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.find({ email: email });
 
-    if (existingUser) {
+    if (existingUser.length > 0) {
       return res.status(400).json({ message: "User already exists" });
     }
 
@@ -57,8 +66,15 @@ const SignUp = async (req, res) => {
 
     await newUser.save();
 
-    const token = generateAccessToken({ id: newUser._id, email: newUser.email });
-    res.status(201).json({ message: "User created successfully", token });
+    // Exclude the password field from the response
+    const responseUser = {
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+    };
+
+    res.status(201).json({ message: "User created successfully", user: responseUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

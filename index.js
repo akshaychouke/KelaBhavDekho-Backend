@@ -6,12 +6,16 @@ dotenv.config();
 const connectDB = require("./Database/db.js");
 const app = express();
 
+//to connect Database
 connectDB();
 
+//middlewares
 app.use(cors());
 app.use(express.json());
+
+//routes
 app.use("/auth", authRoute);
 
 app.listen(process.env.PORT, () => {
-  console.log("Server is running on port 5000");
+  console.log("Server Started");
 });
