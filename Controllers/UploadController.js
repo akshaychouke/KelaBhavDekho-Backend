@@ -86,10 +86,29 @@ const getCategories = async (req, res) => {
   }
 };
 
+const { ObjectId } = require("mongodb"); // Import ObjectId from the MongoDB library
+
 const deleteCategory = async (req, res) => {
-  // const {categoryId} = req.query;
+  const { id } = req.params;
+
   try {
-  } catch (error) {}
+    const deleteStatus = await KelaGroup.deleteOne({ _id: new ObjectId(id) });
+
+    if (deleteStatus.deletedCount === 1) {
+      // Check if a document was actually deleted
+      return res.status(200).json({
+        msg: "Category successfully deleted.",
+        deleteCategory: deleteStatus,
+      });
+    } else {
+      return res.status(404).json({
+        msg: "Category not found.",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
 };
 
-module.exports = { UploadDetails, getDetails, getCategories,deleteCategory };
+module.exports = { UploadDetails, getDetails, getCategories, deleteCategory };
