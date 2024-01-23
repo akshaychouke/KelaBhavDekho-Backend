@@ -71,4 +71,25 @@ const getDetails = async (req, res) => {
     return res.status(500).json({ msg: "Internal Server Error" });
   }
 };
-module.exports = { UploadDetails, getDetails };
+
+const getCategories = async (req, res) => {
+  const { userId } = req.query;
+  console.log(userId);
+  try {
+    const kelagroups = await KelaGroup.find({ owner: userId });
+    console.log(kelagroups);
+    return res
+      .status(200)
+      .json({ msg: "Categories fetched successfully", kelagroups });
+  } catch (error) {
+    return res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+const deleteCategory = async (req, res) => {
+  // const {categoryId} = req.query;
+  try {
+  } catch (error) {}
+};
+
+module.exports = { UploadDetails, getDetails, getCategories,deleteCategory };
